@@ -417,14 +417,14 @@ function Owner() {
         <Notice>{message}</Notice>
         <Form submitLabel={storePhotoUrl(store) ? 'Replace photo' : 'Upload photo'} submit={async ({ photo }) => {
           setMessage('')
-          if (photo.size > 5 * 1024 * 1024) throw new Error('Choose an image no larger than 5 MB.')
+          if (photo.size > 4 * 1024 * 1024) throw new Error('Choose an image no larger than 4 MB.')
           await api('/owner/store/photo', 'PUT', photo)
           setMessage('Store photo updated.')
           setRevision((current) => current + 1)
         }}>
           <label>Choose an image
             <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required />
-            <small>JPEG, PNG, or WebP. Up to 5 MB.</small>
+            <small>JPEG, PNG, or WebP. Up to 4 MB.</small>
           </label>
         </Form>
       </section>

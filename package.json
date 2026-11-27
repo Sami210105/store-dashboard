@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env start.js",
     "build": "vite build",
     "client": "vite",
     "setup": "node --env-file-if-exists=.env setup.js",

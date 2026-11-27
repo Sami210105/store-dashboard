@@ -10,7 +10,7 @@ const app = express()
 const api = express.Router()
 const roles = ['admin', 'user', 'owner']
 const sessionCookie = 'ratings_session'
-const cookieOptions = { httpOnly: true, sameSite: 'strict', secure: process.env.COOKIE_SECURE === 'true', path: '/' }
+const cookieOptions = { httpOnly: true, sameSite: 'strict', secure: process.env.VERCEL === '1' || process.env.COOKIE_SECURE === 'true', path: '/' }
 const sessionLifetime = 86400000
 const hashToken = (token) => createHash('sha256').update(token).digest('hex')
 const getToken = (req) => req.headers.cookie?.match(/(?:^|;\s*)ratings_session=([a-f0-9]{64})(?:;|$)/)?.[1]
@@ -20,7 +20,7 @@ const dist = fileURLToPath(new URL('./dist/', import.meta.url))
 app.disable('x-powered-by')
 app.use('/api', api)
 const photoTypes = ['image/jpeg', 'image/png', 'image/webp']
-api.put('/owner/store/photo', protect('owner'), express.raw({ type: photoTypes, limit: '5mb' }), async (req, res) => {
+api.put('/owner/store/photo', protect('owner'), express.raw({ type: photoTypes, limit: '4mb' }), async (req, res) => {
   if (!req.is(photoTypes)) throw new HttpError(415, 'Choose a JPEG, PNG, or WebP image.')
   if (!Buffer.isBuffer(req.body) || !req.body.length) throw new HttpError(400, 'Choose an image to upload.')
   let photo
@@ -266,5 +266,4 @@ app.use((error, req, res, next) => {
 })
 
 const dummyHash = await bcrypt.hash(randomBytes(16).toString('hex'), 12)
-const port = Number(process.env.PORT ?? 3000)
-app.listen(port, process.env.HOST ?? '127.0.0.1', () => console.log(`Store Ratings | http://localhost:${port}`))
+export default app

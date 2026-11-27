@@ -7,7 +7,7 @@ A React frontend, an Express API, and a PostgreSQL database.
 Install Node.js 22+ and start Docker Desktop. Open PowerShell and run:
 
 ```powershell
-cd D:\projects\assignment
+cd path\to\store-dashboard
 Copy-Item .env.example .env
 docker compose up -d --wait
 npm.cmd ci
@@ -33,7 +33,7 @@ After setting up the database, run `npm.cmd run seed`. This adds six fictional s
 4. Search by store name or address. Select 5 stars and write an optional review. Edit your rating and review, then reload to verify they persisted.
 5. Log out and log in as the owner. Check the average, rating breakdown, recent activity, and ratings and reviews. Use the photo form to upload a storefront image.
 6. Log back in as administrator. Check the dashboard totals and open the owner's details. Editing the shopper's rating should leave the submitted rating count at one.
-7. Try sorting any table by clicking a column heading. Click again to reverse the order. Try changing your password from the navigation.
+7. Try sorting any table by clicking a column heading. Click again to reverse the order. Try changing your password from the Profile menu.
 
 ## Files to read
 
@@ -42,8 +42,17 @@ After setting up the database, run `npm.cmd run seed`. This adds six fictional s
 - `schema.sql` defines the tables and the view that calculates averages.
 - `setup.js` applies the schema and creates the first administrator.
 
-Each store can have one owner, and each owner can be assigned to one store. Administrators create owner accounts. Admins can edit store details and assign or change the owner from the Stores table. Owners can upload or replace their assigned store photo on the Store dashboard (JPEG, PNG, or WebP up to 5 MB). Photos appear in the store listings. The admin users table includes all roles. Role filtering applies to user accounts.
+Each store can have one owner, and each owner can be assigned to one store. Administrators create owner accounts. Admins can edit store details and assign or change the owner from the Stores table. Owners can upload or replace their assigned store photo on the Store dashboard (JPEG, PNG, or WebP up to 4 MB). Photos appear in the store listings. The admin users table includes all roles. Role filtering applies to user accounts.
 
 The browser uses one login page and an HTTP-only session cookie. The API checks role permissions. Passwords are hashed, and changing a password signs out all existing sessions. For HTTPS deployment, set COOKIE_SECURE=true. This project runs locally by default.
 
 For frontend development with hot reloading, keep the server running and use `npm.cmd run client` in another terminal. Open the address printed by Vite.
+
+## Deploy to Vercel
+
+1. In Vercel, import the GitHub repository and use the Vite framework preset. The React build is served as static files, and requests under /api are handled by Express.
+2. Connect a hosted PostgreSQL database and set its connection string as DATABASE_URL in the Vercel project's Production environment variables. Set COOKIE_SECURE=true.
+3. Before deploying, initialize that hosted database. In PowerShell, set DATABASE_URL to the hosted database connection string and set ADMIN_EMAIL and ADMIN_PASSWORD to your production admin credentials in the process environment. Use a unique password that meets the app's password rules. Run npm.cmd run setup and optionally npm.cmd run seed. The process variables override the local .env settings.
+4. Deploy the main branch and test signup, login, and the owner dashboard on the production URL.
+
+Use a separate database if you enable Preview deployments. Store connection strings in environment variables.
