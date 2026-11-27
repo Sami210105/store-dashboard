@@ -17,8 +17,14 @@ body { margin: 0; }
 .shell { width: min(100% - 2rem, 76rem); margin-inline: auto; }
 header { background: var(--deep-green); color: var(--cream); border-bottom: 1px solid #689580; }
 .header-inner, .account, .heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+@media (max-width: 28rem) {
+  .account { min-width: 11rem; --profile-width: 11rem; }
+}
 .header-inner { min-height: 4.5rem; padding-block: .75rem; }
 .header-inner > strong { font-size: 1.3rem; }
+.account { position: relative; }
+.profile-menu summary { padding: .5rem .8rem; border: 1px solid transparent; border-radius: .5rem; cursor: pointer; font-weight: 600; }
+.profile-panel { position: absolute; z-index: 2; top: calc(100% + .45rem); right: 0; display: grid; gap: .6rem; width: var(--profile-width, 14rem); padding: .75rem; border: 1px solid var(--line); border-radius: .65rem; background: var(--cream); color: var(--ink); box-shadow: 0 .6rem 1.25rem #0d362b40; overflow-wrap: anywhere; }
 main { padding-block: 1.5rem 3rem; }
 nav { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
 nav button { background: var(--deep-green); color: var(--cream); }
@@ -65,7 +71,7 @@ table { width: 100%; border-collapse: collapse; text-align: left; }
 th, td { padding: .75rem .6rem; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
 th { color: var(--deep-green); background: var(--sage); }
 td { background: var(--white); }
-td form { min-width: 8.8rem; }
+.rating-action { white-space: nowrap; }
 .sort { padding: 0; background: transparent; color: inherit; text-align: left; }
 .details { margin-top: 1rem; padding: 1rem; background: var(--pale-sage); border-radius: .5rem; }
 .details h2 { margin: 0; }
@@ -90,7 +96,20 @@ dd { margin: 0 0 .7rem; overflow-wrap: anywhere; }
 .rating-stars { white-space: nowrap; letter-spacing: .04em; }
 .empty-stars { color: #687971; }
 .optional { color: var(--muted); font-size: .875rem; font-weight: 400; }
-td form:has(.star-picker) { min-width: 11rem; }
+.rating-dialog {
+  width: min(100% - 2rem, 28rem);
+  max-height: calc(100% - 2rem);
+  padding: clamp(1rem, 5vw, 1.6rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--cream);
+  color: var(--ink);
+  box-shadow: 0 1rem 3rem #0d362b60;
+}
+.rating-dialog::backdrop { background: #103c3080; }
+.rating-dialog-header { display: flex; align-items: start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.rating-dialog-header h2 { margin: .25rem 0 0; overflow-wrap: anywhere; }
+.rating-dialog textarea { resize: vertical; }
 .owner-dashboard { display: grid; gap: 1rem; }
 .owner-dashboard h1, .owner-store-name, .owner-stats p { margin: 0; }
 .owner-stats p, .activity time { color: var(--muted); font-size: .875rem; }

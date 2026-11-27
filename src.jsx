@@ -290,7 +290,7 @@ function RatingForm({ store, onSaved }) {
     onSaved(store.name)
   }}>
     <fieldset className="star-picker">
-      <legend>Rate {store.name}</legend>
+      <legend>Choose a star rating</legend>
       <div className="star-options">
         {scores.map((score) => <label key={score} className={score <= selected ? 'star-option selected' : 'star-option'}>
           <input name="score" type="radio" value={score} required checked={score === selected}
@@ -300,7 +300,7 @@ function RatingForm({ store, onSaved }) {
       </div>
     </fieldset>
     <label><span>Review <span className="optional">(optional)</span></span>
-      <textarea name="review" rows={2} maxLength={1000} defaultValue={store.my_review ?? ''} />
+      <textarea name="review" rows={4} maxLength={1000} defaultValue={store.my_review ?? ''} />
     </label>
   </Form>
 }
@@ -309,21 +309,45 @@ function Shopper() {
   const listing = useListing()
   const [revision, setRevision] = useState(0)
   const [message, setMessage] = useState('')
+  const [editing, setEditing] = useState(null)
+  const dialog = useRef(null)
   const result = useData('/stores?' + listing.query, revision)
+
+  useEffect(() => {
+    const element = dialog.current
+    if (editing && !element.open) element.showModal()
+    if (!editing && element.open) element.close()
+  }, [editing])
   const columns = [storeNameColumn, address, rating, {
     key: 'my_rating', label: 'Your rating', render: (row) => row.my_rating == null ? 'Unrated' : <Stars score={row.my_rating} />
   }, {
-    key: 'action', label: 'Rate store', action: true,
-    render: (store) => <RatingForm key={JSON.stringify([store.my_rating, store.my_review])} store={store} onSaved={(storeName) => {
-      setMessage('Rating saved for ' + storeName + '.')
-      setRevision((current) => current + 1)
-    }} />
+    key: 'action', label: 'Actions', action: true,
+    render: (store) => {
+      const label = store.my_rating == null ? 'Rate store' : 'Edit rating'
+      return <button className="secondary rating-action" type="button" aria-haspopup="dialog"
+        aria-label={label + ' for ' + store.name} onClick={() => setEditing(store)}>{label}</button>
+    }
   }]
   return <section><h1>Browse stores</h1><div className="panel">
     <Filters fields={[name, address]} listing={listing} />
     <Notice>{message}</Notice>
     <Results result={result} render={(rows) => <Table columns={columns} rows={rows} listing={listing} />} />
-  </div></section>
+  </div>
+    <dialog className="rating-dialog" ref={dialog} aria-labelledby="rating-dialog-title"
+      onClose={() => { if (!dialog.current.open) setEditing(null) }}>
+      {editing && <>
+        <div className="rating-dialog-header">
+          <h2 id="rating-dialog-title">{editing.name}</h2>
+          <button className="secondary" type="button" onClick={() => dialog.current.close()}>Cancel</button>
+        </div>
+        <RatingForm key={editing.id} store={editing} onSaved={(storeName) => {
+          setMessage('Rating saved for ' + storeName + '.')
+          setRevision((current) => current + 1)
+          setEditing((current) => current === editing ? null : current)
+        }} />
+      </>}
+    </dialog>
+  </section>
 }
 
 const activityDate = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
@@ -428,9 +452,31 @@ function App() {
   return <>
     <header><div className="shell header-inner">
       <strong>Store Ratings</strong>
-      {user && <div className="account"><span>{user.name}</span><button className="secondary" onClick={async () => {
-        try { await api('/logout', 'POST'); signedOut() } catch (failure) { setError(failure.message) }
-      }}>Log out</button></div>}
+      {user && <div className="account">
+        <details className="profile-menu" onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false
+        }} onKeyDown={(event) => {
+          if (event.key === 'Escape' && event.currentTarget.open) {
+            event.currentTarget.open = false
+            event.currentTarget.querySelector('summary').focus()
+          }
+        }}>
+          <summary className="secondary">Profile</summary>
+          <div className="profile-panel">
+            <strong>{user.name}</strong>
+            <button type="button" className="secondary" aria-current={page === 'password' ? 'page' : undefined}
+              onClick={(event) => {
+                const menu = event.currentTarget.closest('details')
+                menu.open = false
+                menu.querySelector('summary').focus()
+                setPage('password')
+              }}>Change password</button>
+          </div>
+        </details>
+        <button className="secondary" onClick={async () => {
+          try { await api('/logout', 'POST'); signedOut() } catch (failure) { setError(failure.message) }
+        }}>Log out</button>
+      </div>}
     </div></header>
     <main className="shell">
       <Notice error={error} />
@@ -441,7 +487,6 @@ function App() {
           {user.role === 'admin' && ['users', 'stores'].map((item) =>
             <button key={item} aria-current={page === item ? 'page' : undefined} onClick={() => setPage(item)}>
               {item === 'users' ? 'Users' : 'Stores'}</button>)}
-          <button aria-current={page === 'password' ? 'page' : undefined} onClick={() => setPage('password')}>Change password</button>
         </nav>
         {page === 'password' ? <section className="panel narrow"><h1>Change password</h1>
           <Form submitLabel="Update password" submit={async (values) => {
