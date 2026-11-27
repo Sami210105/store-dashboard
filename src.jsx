@@ -107,8 +107,7 @@ function Form({ children, submitLabel, submit }) {
 function Auth({ onLogin, initialMessage }) {
   const [signup, setSignup] = useState(false)
   const [message, setMessage] = useState(initialMessage)
-  return <div className="auth-layout">
-    <section className="panel auth">
+  return <section className="panel auth">
     <h1>{signup ? 'Create your account' : 'Log in'}</h1>
     <Notice>{message}</Notice>
     <Form key={String(signup)} submitLabel={signup ? 'Create account' : 'Log in'} submit={async (values) => {
@@ -123,16 +122,7 @@ function Auth({ onLogin, initialMessage }) {
     <button className="secondary" onClick={() => { setSignup(!signup); setMessage('') }}>
       {signup ? 'Back to login' : 'Create an account'}
     </button>
-    </section>
-    <figure className="review-art">
-      <div className="review-art-grid">
-        <img src="/review-art/pinned-review.png" width="1080" height="1350" alt="Crafted by Nature’s cream review note on a dark green background" />
-        <img src="/review-art/feedback-card.png" width="736" height="736" alt="Konker’s white review card on a light green background" />
-        <img src="/review-art/testimonial-cards.png" width="1080" height="1350" alt="British Noble Press’s layered testimonial cards" />
-      </div>
-      <figcaption>Review design references</figcaption>
-    </figure>
-  </div>
+  </section>
 }
 
 function useListing(initialSort = { sort: 'name', dir: 'asc' }) {
