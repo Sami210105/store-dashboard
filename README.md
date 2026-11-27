@@ -2,6 +2,8 @@
 
 A React frontend, an Express API, and a PostgreSQL database.
 
+**Live demo** [sa-ratings.vercel.app](https://sa-ratings.vercel.app)
+
 ## Start on Windows
 
 Install Node.js 22+ and start Docker Desktop. Open PowerShell and run:
