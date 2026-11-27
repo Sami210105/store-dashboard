@@ -1,0 +1,21 @@
+{
+  "name": "store-ratings-assignment",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env server.js",
+    "build": "vite build",
+    "client": "vite",
+    "setup": "node --env-file-if-exists=.env setup.js",
+    "seed": "node --env-file-if-exists=.env seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "3",
+    "express": "5",
+    "pg": "8",
+    "react": "19",
+    "react-dom": "19",
+    "sharp": "^0.35.5",
+    "vite": "6"
+  }
+}
