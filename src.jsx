@@ -55,7 +55,11 @@ const storeNameColumn = {
 }
 const email = { key: 'email', label: 'Email' }
 const address = { key: 'address', label: 'Address' }
-const role = { key: 'role', label: 'Role', render: (row) => roles[row.role] }
+const role = {
+  key: 'role',
+  label: 'Role',
+  render: (row) => <span className={'role-badge role-' + row.role}>{roles[row.role]}</span>
+}
 const ratingText = (score) => score == null ? 'Unrated' : Number(score).toFixed(2)
 const rating = { key: 'rating', label: 'Overall rating', render: (row) => ratingText(row.rating) }
 
@@ -226,8 +230,8 @@ function AdminListing({ users }) {
   }]
   return <section>
     <h1>{users ? 'Users' : 'Stores'}</h1>
-    <div className="layout">
-      <div className="panel">
+    <div className={users ? 'layout users-layout' : 'layout'}>
+      <div className={users ? 'panel users-table' : 'panel'}>
         <Filters fields={fields} listing={listing} />
         <Results result={result} render={(rows) => <Table columns={columns} rows={rows} listing={listing} />} />
         {selected && <UserDetails key={selected} userId={selected} close={() => setSelected(null)} />}
