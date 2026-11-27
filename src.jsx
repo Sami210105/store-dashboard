@@ -230,8 +230,8 @@ function AdminListing({ users }) {
   }]
   return <section>
     <h1>{users ? 'Users' : 'Stores'}</h1>
-    <div className={users ? 'layout users-layout' : 'layout'}>
-      <div className={users ? 'panel users-table' : 'panel'}>
+    <div className="layout admin-listing">
+      <div className={'panel admin-table ' + (users ? 'users-table' : 'stores-table')}>
         <Filters fields={fields} listing={listing} />
         <Results result={result} render={(rows) => <Table columns={columns} rows={rows} listing={listing} />} />
         {selected && <UserDetails key={selected} userId={selected} close={() => setSelected(null)} />}
